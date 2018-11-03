@@ -31,3 +31,5 @@ function myFunc(arr) {
 
 console.log(myFunc([2, 3, 4])); // should output 18
 ```
+
+Line added here!
