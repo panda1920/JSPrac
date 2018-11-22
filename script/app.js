@@ -42,3 +42,26 @@ rudeDog.greeting();
 console.log(rudeDog);
 console.log(rudeDog.name);
 console.log(rudeDog.constructor);
+
+// checking undefined is falsey
+
+function funcCheckArg(arg1, arg2, arg3) {
+    console.log(arg1);
+    console.log(arg2);
+    console.log(arg3);
+    isTruthy(arg1, "arg1");
+    isTruthy(arg2, "arg2");
+    isTruthy(arg3, "arg3");
+}
+function isTruthy(arg, str) {
+    if (arg) {
+        console.log(`${str} is truthy`);
+    }
+    else {
+        console.log(`${str} is falsey`);
+    }
+}
+
+funcCheckArg(1);
+funcCheckArg(1, 2);
+funcCheckArg(1, 2, 3);
