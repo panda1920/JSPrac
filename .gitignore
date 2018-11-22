@@ -1,2 +1,4 @@
 # ignore all txt files
 *.txt
+# but make an exception to anything in /text
+!/text/*.txt
