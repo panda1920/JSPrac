@@ -65,3 +65,17 @@ function isTruthy(arg, str) {
 funcCheckArg(1);
 funcCheckArg(1, 2);
 funcCheckArg(1, 2, 3);
+
+// Using greetr
+let g = Greetr("Bob", "Marley", "en");
+console.log(g.fullName());
+console.log(g.greeting());
+console.log(g.formalGreeting());
+
+g.greet();
+g.greet(true);
+g.setLang("es").greet();
+
+$(document).ready(function() {
+    g.updateWithGreeting("#greeting");
+});
