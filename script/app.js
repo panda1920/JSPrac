@@ -77,5 +77,12 @@ g.greet(true);
 g.setLang("es").greet();
 
 $(document).ready(function() {
-    g.updateWithGreeting("#greeting");
+    // g.updateWithGreeting("#greeting");
+
+    // add click event
+    $("#Login").click(function() {
+        $("#logindiv").hide();
+        g.setLang($("#lang").val());
+        g.updateWithGreeting("#greeting", true).log();
+    });
 });

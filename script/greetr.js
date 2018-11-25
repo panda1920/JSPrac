@@ -54,7 +54,7 @@
             return FORMAL_GREETINGS[this.language] + ', ' + this.fullName();
         },
         greet: function(formal) {
-            var msg = formal ? this.formalGreeting() : this.greeting();
+            var msg = this.getGreetString(formal);
             if (console) console.log(msg);
             return this;
         },
@@ -76,8 +76,11 @@
                 throw "selector not available";
             }
 
-            $(selector).text(this.greeting());
+            $(selector).text(this.getGreetString(formal));
             return this;
+        },
+        getGreetString: function(formal) {
+            return formal ? this.formalGreeting() : this.greeting();
         }
     };
 
