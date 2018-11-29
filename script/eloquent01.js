@@ -1,27 +1,4 @@
 //////////
-// Utility functions
-//////////
-function test(func, args, expectedVal) {
-    let retVal;
-    let msg = `Test of ${func.name}() with args [${args}] has `;
-    let exceptionFlag = false;
-    
-    // run func
-    try {
-        retVal = func.apply(null, args);
-    }
-    catch (e) {
-        exceptionFlag = true;
-    }
-
-    // genereate message
-    msg += (retVal === expectedVal) ? "succeeded!" : "failed!";
-    msg += exceptionFlag ? " with exception!" : "";
-
-    console.log(msg);
-}
-
-//////////
 // Chap 8 excercises
 //////////
 
@@ -47,7 +24,7 @@ function primitiveMultiply(num1, num2) {
     }
 }
 
-test(primitiveMultiply, [2, 3], 6); // should output 6
+testRunner.testCases.push(new TestCase(primitiveMultiply, [2, 3], 6));
 
 // The locked box
 const box = {
@@ -84,7 +61,10 @@ function withBoxUnlockedTester(initLockState, func) {
     return box.locked;
 }
 
-test(withBoxUnlockedTester, [true, doNothing], true);
-test(withBoxUnlockedTester, [false, doNothing], false);
-test(withBoxUnlockedTester, [true, throwSomething], true);
-test(withBoxUnlockedTester, [false, throwSomething], false);
+testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [true, doNothing], true));
+testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [false, doNothing], false));
+testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [true, throwSomething], true));
+testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [false, throwSomething], false));
+
+testRunner.run();
+testRunner.printResult();
