@@ -14,12 +14,12 @@ class TestResult {
     }
 
     // execute test case through this method
-    // so it can do some book-keeping of its own
-    execute() {
+    // so it can do some book-keeping irrelevant of the actual test
+    recordResultWhileTesting() {
         this.isExecuted = true;
         
         let t1 = Date.now();
-        this.testcase.run();
+        this.testPassed = this.testcase.run();
         let t2 = Date.now();
 
         this.executionTime = t2 - t1;
@@ -37,17 +37,16 @@ class TestCase {
 
     run() {
         let retVal;
-        // run func
         try {
             retVal = func.apply(null, args);
         }
         catch (e) {
 
         }
-        this.result.testPassed = retVal === this.expectedVal;
+        return retVal === this.expectedVal;
     }
     runTest() {
-        this.result.execute();
+        this.result.recordResultWhileTesting();
     }
 }
 
