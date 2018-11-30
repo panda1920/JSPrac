@@ -13,7 +13,6 @@ function displayResultOnHtml() {
             testcaseHTML.innerHTML = testresult.getTestResultString();
         resultSpace.appendChild(testcaseHTML);
     });
-    testRunner.printResult();
 }
 function runTest(evt) {
     runTestRunner();
