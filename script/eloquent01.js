@@ -66,5 +66,5 @@ testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [false, doNothing]
 testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [true, throwSomething], true));
 testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [false, throwSomething], false));
 
-testRunner.run();
-testRunner.printResult();
+// testRunner.run();
+// testRunner.printResult();

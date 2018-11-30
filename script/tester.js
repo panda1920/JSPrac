@@ -19,11 +19,23 @@ class TestResult {
         this.isExecuted = true;
         
         let t1 = Date.now();
-        this.testPassed = this.testcase.run();
+        this.testcase.run();
         let t2 = Date.now();
 
         this.executionTime = t2 - t1;
-    }    
+    }
+    testPassed() {
+        this.testPassed = true;
+    }
+    testFailed() {
+        this.testPassed = false;
+    }
+    getTestResultString() {
+        return this.testcase.getTestConditionString() + " has " + (this.testPassed ? "succeeded!" : "failed!");
+    }
+    getExecutionTimeString() {
+        return `Execution time: ${this.executionTime}ms`;
+    }
 }
 
 // a class to run a specific testcase
@@ -36,17 +48,19 @@ class TestCase {
     }
 
     run() {
-        let retVal;
+        let isPassed = false;
         try {
-            retVal = func.apply(null, args);
+            let retVal = func.apply(null, args);
+            isPassed = retVal === this.expectedVal;
         }
-        catch (e) {
-
-        }
-        return retVal === this.expectedVal;
+        catch (e) {}
+        isPassed ? this.result.testPassed() : this.result.testFailed();
     }
     runTest() {
         this.result.recordResultWhileTesting();
+    }
+    getTestConditionString() {
+        return `Test of ${this.func.name}() with args [${this.args}]`;
     }
 }
 
@@ -69,7 +83,7 @@ let testRunner = {
             // generate message to print
             let msg = `\nTest of ${testcase.func.name}() with args [${testcase.args}] has `;
                 msg += result ? "succeeded!\n" : "failed!\n";
-                msg += `Execution time: ${result.executionTime}ms`;
+                msg += result.getExecutionTimeString();
             console.log(msg);
         });
     }
