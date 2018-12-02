@@ -1,0 +1,5 @@
+Future plans:
+	- apply different class to tests that succeed/failed
+	- implement tabs to switch view of testcase list
+	- implement testing of exceptions
+	- implmenent timer to prevent accidental infinite loop stalling the entire program
