@@ -12,13 +12,70 @@
     <script>
         
     </script>
-    <body>
-        <div id="overallTestInfo" style="border: black 1px solid; margin: 10px;">
-            <div id="testNum"></div>
-            <button id="startTest">Start Test!</button> 
-        </div>
-        <div id="testResult" style="border: black 1px solid; margin: 10px;">
+    <style>
+        body {
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 12px;
+            background-color: lightblue;
             
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+        #overallTestInfo {
+            font-size: 16px;
+            
+            margin: 10px;
+        }
+        #overallTestResult {
+            font-size: 16px;
+
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+        #tabs {
+            font-size: 16px;
+
+            margin-right: 10px;
+            margin-left: 10px;
+
+            background-color: white;
+        }
+        #tabs .tab {
+            display: inline-block;
+
+            width: 100px;
+            text-align: left;
+        }
+        #tabs .tab:hover {
+            background-color: lightblue;
+        }
+        #testResult {
+            display: none;
+            
+            margin-right: 10px;
+            margin-left: 10px;
+            border: black 1px soild;
+            border-radius: 1%;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    </style>
+    <body>
+        <div id="overallTestInfo">
+            <button id="startTest">Start Test!</button>
+            <div id="testNum"></div>
+        </div>
+        <div id="tabs">
+            <div class="tab" class="result">All</div>
+            <div class="tab" class="result">Passed</div>
+            <div class="tab" class="result">Failed</div>
+        </div>
+        <div id="overallTestResult" class="result">
+            <div id="testNums"></div>
+            <div id="totalTime"></div>
+        </div>
+        <div id="testResult" class="result">
+
         </div>
     </body>
 </html>
