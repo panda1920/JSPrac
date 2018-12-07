@@ -27,8 +27,22 @@ function createResultHtml() {
 }
 // create html for overall result
 function createOverallResultHtml() {
+    findById("testPercent").textContent = createPassPercentageString(testRunner.testCases);
     findById("testNums").textContent = createTestNumString(testRunner.testCases);
     findById("totalTime").textContent = createTotalTimeString(testRunner.testCases);
+}
+function createPassPercentageString(testCases) {
+    let passCount = 0;
+    let failCount = 0;
+
+    testCases.forEach(testCase => {
+        testCase.result.testPassed ? passCount++ : failCount++;
+    });
+
+    let totalCount  = passCount + failCount;
+    let passPercent = passCount / totalCount * 100;
+
+    return `${passPercent}% of tests passed!`;
 }
 // create text for test numbers
 function createTestNumString(testCases) {

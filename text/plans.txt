@@ -1,5 +1,11 @@
 Future plans:
-	- apply different class to tests that succeed/failed
+	- apply different html class to tests that succeed/failed
 	- implement tabs to switch view of testcase list
 	- implement testing of exceptions
 	- implmenent timer to prevent accidental infinite loop stalling the entire program
+	- layout each testcase result as row for table
+	- have a testpage for each practicefile
+	- find a way to reuse the testpage for each practice file
+	- modularize my js files
+
+DONE:

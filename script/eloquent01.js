@@ -51,9 +51,8 @@ function withBoxUnlocked(box, func) {
         box.unlock();
         func();
     }
-    catch (e) {
-        if (isLockedInit) box.lock();
-    }
+    catch (e) {}
+    if (isLockedInit) box.lock();
 }
 function withBoxUnlockedTester(initLockState, func) {
     box.locked = initLockState;
