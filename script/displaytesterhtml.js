@@ -112,4 +112,5 @@ function addEvents() {
     let myButton = document.getElementById("startTest");
     myButton.addEventListener("click", runTest);
 }
+
 document.addEventListener("DOMContentLoaded", initializePage);

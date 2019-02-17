@@ -11,6 +11,7 @@ class TestResult {
         this.isExecuted = false;
         this.executionTime = null;
         this.testPassed = false;
+        this.testReturned = null;
     }
 
     // execute test case through this method
@@ -35,7 +36,11 @@ class TestResult {
             return this.testcase.getTestConditionString() + " is not executed yet";
         }
         else {
-            return this.testcase.getTestConditionString() + " has " + (this.testPassed ? "succeeded!" : "failed!");
+            let resultString = this.testcase.getTestConditionString() + " has " + (this.testPassed ? "succeeded!" : "failed!");
+            if (!this.testPassed) {
+                resultString += " Received " + this.testReturned;
+            }
+            return resultString;
         }
     }
     getExecutionTimeString() {
@@ -57,8 +62,8 @@ class TestCase {
     run() {
         let isPassed = false;
         try {
-            let retVal = this.func.apply(null, this.args);
-            isPassed = retVal === this.expectedVal;
+            this.result.testReturned = this.func.apply(null, this.args);
+            isPassed = this.result.testReturned === this.expectedVal;
         }
         catch (e) {}
         isPassed ? this.result.pass() : this.result.fail();
