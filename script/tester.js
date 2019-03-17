@@ -73,6 +73,7 @@ class TestCase {
         this.result.recordResultWhileTesting();
     }
     getTestConditionString() {
+
         return `Test of ${this.func.name}() with args [${this.args}]`;
     }
 }
@@ -100,4 +101,30 @@ let testRunner = {
             console.log(msg);
         });
     }
+}
+
+// add test case
+// 1st argument: function to test
+// 2nd argument: args to pass to function
+// 3rd argument: expected return value
+function addTest(func, args, returnValue) {
+    testRunner.testCases.push(new TestCase(func, args, returnValue));
+}
+
+// makes a test case that checks if func throws exception
+function testThrow(func, args, exception) {
+    // create a wrapper function around func
+    let wrapperThrowTestFunc = (func, args, exception) => {
+        try {
+            func.apply(null, args);
+        }
+        catch (e) {
+            // compare exception type
+            return (e instanceof exception.constructor) && (e.message === exception.message);
+        }
+        // if no exceptino is thrown, return false
+        return false;
+    };
+
+    addTest(wrapperThrowTestFunc, [func, args, exception], true);
 }
