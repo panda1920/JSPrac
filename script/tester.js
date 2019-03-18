@@ -1,6 +1,6 @@
 //////////
 // tester.js
-// stores things used for testing code
+// some classes and objets to make testing easier for me
 //////////
 
 // holds test result of a test case
@@ -15,7 +15,7 @@ class TestResult {
     }
 
     // execute test case through this method
-    // so it can do some book-keeping irrelevant of the actual test
+    // so it can do some book-keeping
     recordResultWhileTesting() {
         this.isExecuted = true;
         
@@ -73,7 +73,6 @@ class TestCase {
         this.result.recordResultWhileTesting();
     }
     getTestConditionString() {
-
         return `Test of ${this.func.name}() with args [${this.args}]`;
     }
 }
