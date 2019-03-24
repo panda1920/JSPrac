@@ -24,7 +24,7 @@ function primitiveMultiply(num1, num2) {
     }
 }
 
-testRunner.testCases.push(new TestCase(primitiveMultiply, [2, 3], 6));
+addTest(primitiveMultiply, [2, 3], 6);
 
 // The locked box
 const box = {
@@ -60,10 +60,70 @@ function withBoxUnlockedTester(initLockState, func) {
     return box.locked;
 }
 
-testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [true, doNothing], true));
-testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [false, doNothing], false));
-testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [true, throwSomething], true));
-testRunner.testCases.push(new TestCase(withBoxUnlockedTester, [false, throwSomething], false));
+addTest(withBoxUnlockedTester, [true, doNothing], true);
+addTest(withBoxUnlockedTester, [false, doNothing], false);
+addTest(withBoxUnlockedTester, [true, throwSomething], true);
+addTest(withBoxUnlockedTester, [false, throwSomething], false);
 
 // testRunner.run();
 // testRunner.printResult();
+
+// chap 14 excercises
+
+function searchTagNames(tagName) {
+    // debugger;
+    let doc = document.documentElement;
+
+    searchTagNamesImpl = function(node) {
+        let childNodes = Array.from(node.childNodes);
+        let tags = []
+
+        childNodes.map((childNode) => {
+            // if (tagName === childNode.nodeName)
+            tags.push(childNode.nodeName);
+            let childTags = searchTagNamesImpl(childNode);
+            tags = tags.concat(childTags);
+        });
+
+        return tags;
+    }
+
+    return searchTagNamesImpl(doc);
+}
+
+let chapter14_ElementsByTagName = {
+    inputId: "tagName",
+
+    getContentFromInput: function(inputId) {
+        return document.getElementById(inputId).value;
+    },
+    
+    myGetElementByTagName: function(tagName) {
+        let doc = document.documentElement;
+    
+        // recursive program
+        // returns all children of "node" if children's nodeName matches "tagname" arg
+        // recurse the same process to each children
+        myGetElementByTagNameImpl = (node, tagName) => {
+            let childNodes = Array.from(node.childNodes);
+            let nodes = [];
+    
+            childNodes.map( childNode => {
+                if (childNode.nodeName.toLowerCase() === tagName) {
+                    nodes.push(childNode);
+                }
+    
+                nodes = nodes.concat(myGetElementByTagNameImpl(childNode, tagName));
+            });
+    
+            return nodes;
+        }
+    
+        return myGetElementByTagNameImpl(doc, tagName);
+    },
+
+    printElementsByTagNameToConsole: function() {
+        let tagName = this.getContentFromInput(this.inputId);
+        console.log(this.myGetElementByTagName(tagName));
+    }
+}

@@ -399,6 +399,10 @@ let globalScope = {};
 for (let operand of ["+", "-", "*", "/", "<", ">"]) {
     globalScope[operand] = new Function("a", "b", `return a ${operand} b`);
 }
+// add array funcionality
+globalScope["array"] = new Function("...args", "return args;");
+globalScope["length"] = new Function("array", "if (arguments.length !== 1) throw new SyntaxError('Wrong number of arguments'); let length = array.length; if (length === undefined) throw new SyntaxError('Expecting an array'); return length;");
+globalScope["element"] = new Function("array", "n", "if (arguments.length !== 2) throw new SyntaxError('Wrong number of arguments'); let element = array[n]; if (element === undefined) throw new SyntaxError('Expecting an array'); return element;")
 
 testThrow(
     evaluate,
@@ -444,4 +448,46 @@ addTest(
     globalScope["-"],
     [5, 6],
     -1
+);
+
+console.log(
+    evaluate(
+        createApply("array",
+            createValue("6"),
+            createValue("7"),
+            createValue("8")
+        ),
+        globalScope
+    )
+);
+
+addTest(
+    globalScope["length"],
+    [[1, 2, 3, 4, 5]],
+    5
+);
+testThrow(
+    globalScope["length"],
+    [5],
+    new SyntaxError("Expecting an array")
+);
+testThrow(
+    globalScope["length"],
+    [[1, 2, 3, 4, 5], 3],
+    new SyntaxError('Wrong number of arguments')
+);
+addTest(
+    globalScope["element"],
+    [[2, 3], 1],
+    3
+);
+testThrow(
+    globalScope["element"],
+    [2, 3],
+    new SyntaxError("Expecting an array")
+);
+testThrow(
+    globalScope["length"],
+    [[2, 3], 1, 3],
+    new SyntaxError('Wrong number of arguments')
 );
