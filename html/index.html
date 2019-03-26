@@ -17,8 +17,6 @@
                 let paragraphs = document.getElementById("paragraphs");
                 paragraphs.appendChild(document.createTextNode("NewText"));
             }
-
-            console.log(-"");
         </script>
     </head>
     <body>
@@ -42,9 +40,80 @@
         <button onclick="addTextNode();">Add!</button>
 
         <div id="search">
-            <form><input type="text" id="tagName" name="tagName" placeholder="Enter tag name here"></input></form>
-            <label for="tagName">Tag to search for: </label>
+            <form>
+                <label for="tagName">Tag to search for: </label>
+                <input type="text" id="tagName" name="tagName" placeholder="Enter tag name here"></input>
+            </form>
             <button onclick="chapter14_ElementsByTagName.printElementsByTagNameToConsole();">ShowTagsToOutput</button>
+        </div>
+        <br/>
+        <div id="chap15">
+            <button>Click here for event!</button>
+            
+            <script>
+                let chap15 = document.getElementById("chap15");
+                let createFunctionThatPrints = function(printString) {
+                    return event => {
+                        console.log(`${printString}: ${event.type}`);
+                    }
+                }
+                let createFunctionNoProgate = function(printString) {
+                    return event => {
+                        event.stopPropagation();
+                        createFunctionThatPrints(printString)(event);
+                    }
+                }
+
+                chap15.querySelector("button").addEventListener("click", createFunctionThatPrints("child"));
+                chap15.addEventListener("click", createFunctionThatPrints("parent"));
+                chap15.querySelector("button").addEventListener("dblclick", createFunctionNoProgate("child"));
+                chap15.addEventListener("dblclick", createFunctionNoProgate("parent"));
+            </script>
+
+            <br/>
+            <br/>
+            <br/>
+
+            <p>Drag the bar to change its width:</p>
+            <div id="orangeBar" style="background:orange; width: 60px; height: 20px;"></div>
+            <script>
+                let bar = document.getElementById("orangeBar");
+                let lastXpos;
+                let lastYpos;
+                
+                // activate when clicked
+                bar.addEventListener("mousedown", event => {
+                    if (event.button === 0) {
+                        lastXpos = event.clientX;
+                        lastYpos = event.clientY;
+                        bar.addEventListener("mousemove", moved);
+                    }
+                    event.preventDefault();
+                    event.stopPropagation();
+                });
+
+                function moved(event) {
+                    console.log("mousemove: " + event.buttons);
+                    if (event.buttons === 0) {
+                        // deactivate when mouse button is released
+                        bar.removeEventListener("mousemove", moved);
+                    } else {
+                        // change width and height of bar depending on the distance from last point
+                        let vDist = event.clientY - lastYpos;
+                        let hDist = event.clientX - lastXpos;
+
+                        let newHeight = bar.offsetHeight + vDist;
+                        let newWidth = bar.offsetWidth + hDist;
+                        bar.style.height = newHeight + "px";
+                        bar.style.width = newWidth + "px";
+
+                        lastXpos = event.clientX;
+                        lastYpos = event.clientY;
+                    }
+                }
+
+            </script>
+
         </div>
     </body>
 </html>
