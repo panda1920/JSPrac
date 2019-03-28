@@ -113,7 +113,45 @@
                 }
 
             </script>
+            
+            <br/>
+            <br/>
+            <br/>
 
+            <div id="balloon" style="font-size: 10px;">🎈</div>
+            <script>
+                let balloon = document.getElementById("balloon");
+                
+                // up and arrow keys would not scroll the window
+                function changeBalloonSize(event) {
+
+                    const MAX_SIZE = 30.0;
+                    let oldSize = parseFloat(/\d+/g.exec(balloon.style.fontSize)[0]);
+                    let newSize;
+
+                    if (event.key === "ArrowUp") {
+                        event.preventDefault();
+                        newSize = oldSize * 1.1;
+                    }
+                    else if (event.key === "ArrowDown") {
+                        event.preventDefault();
+                        newSize = oldSize * 0.9;
+                    }
+                    else {
+                        return;
+                        // do nothing when it is neither up arrow or down arrow
+                    }
+                    balloon.style.fontSize = newSize + "px";
+
+                    // once balloon explodes, no more event listener
+                    if (newSize > MAX_SIZE) {
+                        balloon.innerText = "💥"
+                        window.removeEventListener("keydown", changeBalloonSize);
+                    }
+                }
+
+                window.addEventListener("keydown", changeBalloonSize);
+            </script>
         </div>
     </body>
 </html>
