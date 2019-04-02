@@ -152,6 +152,63 @@
 
                 window.addEventListener("keydown", changeBalloonSize);
             </script>
+
+            <br/>
+            <br/>
+            <br/>
+
+            <style>
+                .trailCircle {
+                    position: absolute;
+                    height: 10px;
+                    width: 10px;
+                    border-radius: 50%
+                }
+            </style>
+
+            <div class="trailCircle" style="background-color: red;"></div>
+            <div class="trailCircle" style="background-color: yellow;"></div>
+            <div class="trailCircle" style="background-color: pink;"></div>
+            <div class="trailCircle" style="background-color: green;"></div>
+            <div class="trailCircle" style="background-color: purple;"></div>
+            <div class="trailCircle" style="background-color: orange;"></div>
+            <div class="trailCircle" style="background-color: blue;"></div>
+
+            <script>
+                let circles = Array.from(document.querySelectorAll(".trailCircle"));
+                let positionHistory = [];
+                let maxHistoryCount = circles.length;
+                let mostRecentPositionIdx = 0;
+                let currentPosition = {top: 0, left: 0};
+                // circles.forEach((element , idx) => { element.style.left = (idx * 10) + "px"; });
+
+                function getoOffsetBetweenEventAndElement(event, element) {
+                    let eventPos = { left: event.clientX, top: event.clientY };
+                    let elementPos = element.getBoundingClientRect();
+
+                    return { left: eventPos.left - elementPos.left, top: eventPos.top - elementPos.top };
+                }
+                function updatePositionHistory(event) {
+                    mostRecentPositionIdx = (mostRecentPositionIdx + 1) % maxHistoryCount;
+                    positionHistory[mostRecentPositionIdx] = { top: currentPosition.top, left: currentPosition.left };
+                    currentPosition = { top: event.clientY, left: event.clientX };
+                }
+
+                document.addEventListener("mousemove", event => {
+                    // console.log("clientx: " + event.clientX);
+                    // console.log("clienty: " + event.clientY);
+                    
+                    // console.log("pagex: " + event.pageX);
+                    // console.log("pagey: " + event.pageY);
+                    
+                    // console.log("screenx: " + event.screenX);
+                    // console.log("screeny: " + event.screenY);
+                    updatePositionHistory(event);
+
+                    // returns the position of the element relative screen
+                    // console.log(getoOffsetBetweenEventAndElement(event, circles[0]));
+                });
+            </script>
         </div>
     </body>
 </html>
