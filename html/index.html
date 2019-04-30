@@ -166,13 +166,15 @@
                 }
             </style>
 
-            <div class="trailCircle" style="background-color: red;"></div>
-            <div class="trailCircle" style="background-color: yellow;"></div>
-            <div class="trailCircle" style="background-color: pink;"></div>
-            <div class="trailCircle" style="background-color: green;"></div>
-            <div class="trailCircle" style="background-color: purple;"></div>
-            <div class="trailCircle" style="background-color: orange;"></div>
-            <div class="trailCircle" style="background-color: blue; left: 10px; top: 200px;"></div>
+            <div id="circleContainer">
+                <div class="trailCircle" style="background-color: red;"></div>
+                <div class="trailCircle" style="background-color: yellow;"></div>
+                <div class="trailCircle" style="background-color: pink;"></div>
+                <div class="trailCircle" style="background-color: green;"></div>
+                <div class="trailCircle" style="background-color: purple;"></div>
+                <div class="trailCircle" style="background-color: orange;"></div>
+                <div class="trailCircle" style="background-color: blue; left: 10px; top: 200px;"></div>
+            </div>
 
             <script>
                 let circles = Array.from(document.querySelectorAll(".trailCircle"));
@@ -180,44 +182,39 @@
                 let maxHistoryCount = circles.length;
                 let mostRecentPositionIdx = 0;
                 let currentPosition = {top: 0, left: 0};
-                // circles.forEach((element , idx) => { element.style.left = (idx * 10) + "px"; });
+                let positionCircleParent = circles[0].getBoundingClientRect();
 
                 // figure out how far away an element is from pos
-                function getoOffsetBetweenPositionAndElement(pos, element) {
-                    let elementPos = element.getBoundingClientRect();
-
-                    return { left: pos.left - elementPos.left, top: pos.top - elementPos.top };
+                function getoOffsetBetweenPositionAndCircleParent(pos) {
+                    return { left: pos.left - positionCircleParent.left, top: pos.top - positionCircleParent.top };
                 }
-                // keeps track of past mouse positions and updates it every movement tick
+                // keeps track of past mouse positions and updates it every tick
                 function updatePositionHistory(event) {
                     mostRecentPositionIdx = (mostRecentPositionIdx + 1) % maxHistoryCount;
                     positionHistory[mostRecentPositionIdx] = { top: currentPosition.top, left: currentPosition.left };
                     currentPosition = { top: event.clientY, left: event.clientX };
                 }
-
-                document.addEventListener("mousemove", event => {
-                    // console.log("clientx: " + event.clientX);
-                    // console.log("clienty: " + event.clientY);
-                    
-                    // console.log("pagex: " + event.pageX);
-                    // console.log("pagey: " + event.pageY);
-                    
-                    // console.log("screenx: " + event.screenX);
-                    // console.log("screeny: " + event.screenY);
-                    circles.forEach((circle, idx) => {
-                        // initial state when no mouse position is recorded
-                        if (positionHistory[idx] === undefined) {
+                // initial state when no mouse position is recorded
+                function controlCircleVisibility(circle, idx) {
+                    if (positionHistory[idx] === undefined) {
                             circle.style.display = "none";
-                            return;
                         }
                         else {
                             circle.style.display = "block";
                         }
+                }
 
+                document.addEventListener("mousemove", event => {
+                    circles.forEach((circle, idx) => {
+                        
+                        controlCircleVisibility(circle, idx);
+                        if (positionHistory[idx] === undefined) return;
+                        
                         // put circle at past mouse position
-                        let circleOffset = getoOffsetBetweenPositionAndElement(positionHistory[idx], circle);
-                        circle.style.top = positionHistory[idx].top + "px";
-                        circle.style.left = positionHistory[idx].left + "px";
+                        let circleOffset = getoOffsetBetweenPositionAndCircleParent(positionHistory[idx]);
+                        circle.style.top = circleOffset.top + "px";
+                        circle.style.left = circleOffset.left + "px";
+                        console.log(circleOffset);
                     });
                     updatePositionHistory(event);
                 });
