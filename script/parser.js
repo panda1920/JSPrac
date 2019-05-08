@@ -8,11 +8,11 @@ function skipSpace(string) {
     return string.slice(nonStringIdx);
 }
 
-addTest(skipSpace, ["Candy"], "Candy");
-addTest(skipSpace, ["Some Candy"], "Some Candy");
-addTest(skipSpace, ["CandyAfterSpace  "], "CandyAfterSpace  ");
-addTest(skipSpace, [" CandySingle"], "CandySingle");
-addTest(skipSpace, ["  CandyDouble"], "CandyDouble");
+addTest(skipSpace, null ["Candy"], "Candy");
+addTest(skipSpace, null ["Some Candy"], "Some Candy");
+addTest(skipSpace, null ["CandyAfterSpace  "], "CandyAfterSpace  ");
+addTest(skipSpace, null [" CandySingle"], "CandySingle");
+addTest(skipSpace, null ["  CandyDouble"], "CandyDouble");
 
 function parseExpression(program) {
     let programTrimmed = skipSpace(program);
@@ -56,21 +56,21 @@ function findPrimitiveName(program) {
     return findPrimitive(program).expr.name;
 }
 
-addTest(findPrimitiveMatch, ["var"], "var");
-addTest(findPrimitiveType, ["var"], "word");
-addTest(findPrimitiveMatch, ["\"var\""], "\"var\"");
-addTest(findPrimitiveType, ["\"var\""], "value");
-addTest(findPrimitiveMatch, ["2216"], "2216");
-addTest(findPrimitiveType, ["2216"], "value");
-addTest(findPrimitiveValue, ["2216"], 2216);
-addTest(findPrimitiveMatch, ["BBY2216"], "BBY2216");
-addTest(findPrimitiveType, ["BBY2216"], "word");
-addTest(findPrimitiveValue, ["BBY2216"], undefined);
-addTest(findPrimitiveMatch, ["2216AAB"], "2216AAB");
-addTest(findPrimitiveType, ["2216AAB"], "word");
-addTest(findPrimitiveValue, ["2216AAB"], undefined);
-addTest(findPrimitiveName, ["if("], "if");
-addTest(findPrimitiveType, ["if("], "word");
+addTest(findPrimitiveMatch, null ["var"], "var");
+addTest(findPrimitiveType, null ["var"], "word");
+addTest(findPrimitiveMatch, null ["\"var\""], "\"var\"");
+addTest(findPrimitiveType, null ["\"var\""], "value");
+addTest(findPrimitiveMatch, null ["2216"], "2216");
+addTest(findPrimitiveType, null ["2216"], "value");
+addTest(findPrimitiveValue, null ["2216"], 2216);
+addTest(findPrimitiveMatch, null ["BBY2216"], "BBY2216");
+addTest(findPrimitiveType, null ["BBY2216"], "word");
+addTest(findPrimitiveValue, null ["BBY2216"], undefined);
+addTest(findPrimitiveMatch, null ["2216AAB"], "2216AAB");
+addTest(findPrimitiveType, null ["2216AAB"], "word");
+addTest(findPrimitiveValue, null ["2216AAB"], undefined);
+addTest(findPrimitiveName, null ["if("], "if");
+addTest(findPrimitiveType, null ["if("], "word");
 
 function parseApply(expression, restProgram) {
     let programTrimmed = skipSpace(restProgram);
@@ -220,6 +220,7 @@ function createApply(operator, ...args) {
 // evaluate number
 addTest(
     evaluate,
+    null,
     [
         createValue(12),
         null
@@ -229,6 +230,7 @@ addTest(
 // evaluate string
 addTest(
     evaluate,
+    null,
     [
         createValue("SOMESTRING"),
         null
@@ -239,6 +241,7 @@ addTest(
 // evaluate some bindings
 addTest(
     evaluate,
+    null,
     [
         createWord("var1"),
         {
@@ -251,6 +254,7 @@ addTest(
 // check exception throwing when binding does not exist
 testThrow(
     evaluate,
+    null,
     [
         createWord("someVar"),
         {
@@ -264,6 +268,7 @@ testThrow(
 // trying to evaluate someFunc(2, 3);
 addTest(
     evaluate,
+    null,
     [
         createApply(
             "someFunc",
@@ -282,6 +287,7 @@ addTest(
 // testing if
 addTest(
     evaluate,
+    null,
     [
         createApply(
             "if",
@@ -296,6 +302,7 @@ addTest(
 // passing wrong number of arguments to if
 testThrow(
     evaluate,
+    null,
     [
         createApply(
             "if",
@@ -312,6 +319,7 @@ testThrow(
 // applying a function that does not exist
 testThrow(
     evaluate,
+    null,
     [
         createApply(
             "anotherFunc",
@@ -328,6 +336,7 @@ testThrow(
 // applying a non-function
 testThrow(
     evaluate,
+    null,
     [
         createApply(
             "somevar",
@@ -406,6 +415,7 @@ globalScope["element"] = new Function("array", "n", "if (arguments.length !== 2)
 
 testThrow(
     evaluate,
+    null,
     [
         createApply("fun"),
         {scope: null}
@@ -425,27 +435,32 @@ let customFunc = specialForms.fun(
 
 addTest(
     customFunc,
+    null,
     [5, 6],
     11
 );
 testThrow(
     customFunc,
+    null,
     [8],
     new SyntaxError("Wrong number of arguments")
 )
 testThrow(
     customFunc,
+    null,
     [8, 2, 5],
     new SyntaxError("Wrong number of arguments")
 )
 
 addTest(
     globalScope["+"],
+    null,
     [5, 6],
     11
 );
 addTest(
     globalScope["-"],
+    null,
     [5, 6],
     -1
 );
@@ -463,31 +478,37 @@ console.log(
 
 addTest(
     globalScope["length"],
+    null,
     [[1, 2, 3, 4, 5]],
     5
 );
 testThrow(
     globalScope["length"],
+    null,
     [5],
     new SyntaxError("Expecting an array")
 );
 testThrow(
     globalScope["length"],
+    null,
     [[1, 2, 3, 4, 5], 3],
     new SyntaxError('Wrong number of arguments')
 );
 addTest(
     globalScope["element"],
+    null,
     [[2, 3], 1],
     3
 );
 testThrow(
     globalScope["element"],
+    null,
     [2, 3],
     new SyntaxError("Expecting an array")
 );
 testThrow(
     globalScope["length"],
+    null,
     [[2, 3], 1, 3],
     new SyntaxError('Wrong number of arguments')
 );

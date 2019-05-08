@@ -1,0 +1,46 @@
+body {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 12px;
+    background-color: lightblue;
+    
+    margin-right: 10px;
+    margin-left: 10px;
+}
+#overallTestInfo {
+    font-size: 16px;
+    
+    margin: 10px;
+}
+#overallTestResult {
+    font-size: 16px;
+
+    margin-right: 10px;
+    margin-left: 10px;
+}
+#tabs {
+    font-size: 16px;
+
+    margin-right: 10px;
+    margin-left: 10px;
+
+    background-color: white;
+}
+#tabs .tab {
+    display: inline-block;
+
+    width: 100px;
+    text-align: left;
+}
+#tabs .tab:hover {
+    background-color: lightblue;
+}
+#testResult {
+    display: none;
+    
+    margin-right: 10px;
+    margin-left: 10px;
+    border: black 1px soild;
+    border-radius: 1%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

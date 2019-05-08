@@ -105,10 +105,9 @@ function findById(idString) {
 }
 
 
+// Initialize test pgae ------------------------------------
+
 function initializePage() {
-    addEvents();
-}
-function addEvents() {
     let myButton = document.getElementById("startTest");
     myButton.addEventListener("click", runTest);
 }

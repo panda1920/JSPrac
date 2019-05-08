@@ -50,8 +50,9 @@ class TestResult {
 
 // a class to run a specific testcase
 class TestCase {
-    constructor(func, args, expectedVal) {
+    constructor(func, context, args, expectedVal) {
         this.func = func;
+        this.context = context;
         this.args = args;
         this.expectedVal = expectedVal;
         this.result = new TestResult(this);
@@ -62,10 +63,10 @@ class TestCase {
     run() {
         let isPassed = false;
         try {
-            this.result.testReturned = this.func.apply(null, this.args);
+            this.result.testReturned = this.func.apply(this.context, this.args);
             isPassed = this.result.testReturned === this.expectedVal;
         }
-        catch (e) {}
+        catch (e) {console.warn(e.message)};
         isPassed ? this.result.pass() : this.result.fail();
     }
     // run test case through this method so result could do additional book-keeping
@@ -104,18 +105,19 @@ let testRunner = {
 
 // add test case
 // 1st argument: function to test
-// 2nd argument: args to pass to function
-// 3rd argument: expected return value
-function addTest(func, args, returnValue) {
-    testRunner.testCases.push(new TestCase(func, args, returnValue));
+// 2nd argument: the context to run function under
+// 3rd argument: args to pass to function
+// 4th argument: expected return value
+function addTest(func, context, args, returnValue) {
+    testRunner.testCases.push(new TestCase(func, context, args, returnValue));
 }
 
 // makes a test case that checks if func throws exception
-function testThrow(func, args, exception) {
+function testThrow(func, context, args, exception) {
     // create a wrapper function around func
-    let wrapperThrowTestFunc = (func, args, exception) => {
+    let wrapperThrowTestFunc = (func, context, args, exception) => {
         try {
-            func.apply(null, args);
+            func.apply(context, args);
         }
         catch (e) {
             // compare exception type
@@ -125,5 +127,5 @@ function testThrow(func, args, exception) {
         return false;
     };
 
-    addTest(wrapperThrowTestFunc, [func, args, exception], true);
+    addTest(wrapperThrowTestFunc, [func, context, args, exception], true);
 }
