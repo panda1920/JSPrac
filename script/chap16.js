@@ -1,6 +1,19 @@
+//--------------------------------------------------
+// eloquent js chapter 16
+// 
+// implementing a simple game
+// a classic side-scroll where player's job is to acquire coins on the map
+//--------------------------------------------------
+
+// size of game entities
 const SCALE_SIZE = 20;
+// wobble motion of coins on map
 const WOBBLE_SPEED = 8;
 const WOBBLE_DIST = 0.07;
+// speed of player
+const PLAYER_SPEED_X = 7;
+const PLAYER_SPEED_JUMP = -17;
+const PLAYER_SPEED_GRAVITY = 30;
 
 // represents two dimensional vector
 class Vec {
@@ -72,6 +85,15 @@ class MapEntity {
         this.type = type;
         this.pos = pos;
     }
+    // checks if this and otherEntity overlaps one another
+    overlap(otherEntity) {
+        return (
+            this.pos.x + this.size.x > otherEntity.pos.x &&
+            this.pos.x < otherEntity.pos.x + otherEntity.size.x &&
+            this.pos.y + this.size.y > otherEntity.pos.y &&
+            this.pos.y < otherEntity.pos.y + otherEntity.size.y
+        );
+    }
 }
 // default size for all map entities
 MapEntity.prototype.size = new Vec(1, 1);
@@ -88,7 +110,34 @@ class Player extends MapEntity {
         this.size = new Vec(0.8, 1.5);
     }
     update(time, state, keys) {
+        // calculate next position
+        let nextSpeed = this.calcSpeedFromKeys(keys);
+        let nextPos = this.pos.plus(nextSpeed.times(time));
+
         
+        // horizontal collision
+        if (state.level.touches(new Vec(nextPos.x, this.pos.y), this.size, "wall")) {
+            nextSpeed.x = 0;
+        }
+        // vertical collision
+        if (state.level.touches(new Vec(this.pos.x, nextPos.y), this.size, "wall")) {
+            nextSpeed.y = 0;
+        }
+
+        // TODO: deal with jumps
+
+        this.speed = nextSpeed;
+        this.pos = this.pos.plus(this.speed.times(time));
+    }
+    // calculate player speed based on keys pressed
+    calcSpeedFromKeys(keys) {
+        let xspeed = 0;
+        let yspeed = 0;
+        if (keys.ArrowLeft)  xspeed -= PLAYER_SPEED_X;
+        if (keys.ArrowRight) xspeed += PLAYER_SPEED_X;
+        if (keys.ArrowUp)    yspeed += PLAYER_SPEED_JUMP;
+        
+        return new Vec(xspeed, yspeed);
     }
 }
 class Lava extends MapEntity {
@@ -98,11 +147,27 @@ class Lava extends MapEntity {
         this.reset = reset;
     }
     update(time, state) {
+        let nextpos = this.pos.plus(this.speed.times(time));
+        // vertical hit-a-wall-check
+        if (state.level.touches(new Vec(this.pos.x, nextpos.y), this.size, "wall")) {
+            // if there is a reset, do that and return
+            if (this.reset) {
+                this.pos = this.reset; return;
+            }
+            // not a reset
+            this.speed.y = 0 - this.speed.y;
+        }
+        // horizontal hit-a-wall-check
+        if (state.level.touches(new Vec(nextpos.x, this.pos.y), this.size, "wall")) {
+            this.speed.x = 0 - this.speed.x;
+        }
+        // calculate new position based on renewed speed
         let newpos = this.pos.plus(this.speed.times(time));
-        // deal with movement of differnet types of lava
-        // oscillating, resetting
-        // need collision detection with the wall
         this.pos = newpos;
+    }
+    // returns new state when player makes collision with this
+    collide(state) {
+        return new State(state.level, state.actors, "lost");
     }
 }
 class Coin extends MapEntity {
@@ -115,8 +180,15 @@ class Coin extends MapEntity {
     }
     update(time, state) {
         this.wobble      = this.wobble + time * WOBBLE_SPEED;
-        let wobbleOffset = Math.sin(newWobble) * WOBBLE_DIST;
+        let wobbleOffset = Math.sin(this.wobble) * WOBBLE_DIST;
         this.pos = this.basepos.plus(new Vec(0, wobbleOffset));
+    }
+    // returns new state when player makes collision with this
+    collide(state) {
+        let allOtherActors = state.actors.filter(actor => actor !== this);
+        // if no more coin, win
+        let newStatus = allOtherActors.some(actor => actor.type === "coin") ? state.status : "won";
+        return new State(state.level, state.actors, newStatus);
     }
 }
 
@@ -145,6 +217,40 @@ class Level {
         this.height = rows.length;
         this.width  = rows[0].length;
         this.rows = rows;
+    }
+    // determines if an entity of a given "pos", "size"
+    // touches a static map entity of targetType
+    touches(pos, size, targetType) {
+        let minX = Math.floor(pos.x);
+        let minY = Math.floor(pos.y);
+        let maxX = Math.ceil(pos.x + size.x);
+        let maxY = Math.ceil(pos.y + size.y);
+
+        // check all position occupied by arguments "pos", "size"
+        for (let y = minY; y < maxY; ++y) {
+            for (let x = minX; x < maxX; ++x) {
+                let posToCheck = new Vec(x, y);
+                let entityTypeAtPosToCheck;
+                
+                // deal with cases where posToCheck is out of bounds
+                if (this.isInBounds(posToCheck)) {
+                    entityTypeAtPosToCheck = this.rows[posToCheck.y][posToCheck.x].type;
+                }
+                else {
+                    // anything out of bounds assumed to be wall
+                    entityTypeAtPosToCheck = "wall";
+                }
+                // if posToCheck is found to touch targetType, return immediately
+                if (entityTypeAtPosToCheck === targetType) return true;
+            }
+        }
+
+        return false;
+    }
+
+    // checks to see if pos is within game level
+    isInBounds(pos) {
+        return pos.x >= 0 && pos.x < this.width && pos.y >= 0 && pos.y < this.height;
     }
 }
 
@@ -188,7 +294,7 @@ class HtmlFactory {
     }
 }
 
-// displays the game onto the specified html element
+// displays the gamelevel "level" onto the given "parent" html element
 class DomDisplay {
     constructor(parent, level) {
         this.dom = HtmlFactory.elt("div", {class: "game"}, HtmlFactory.createHtmlForLevel(level));
@@ -212,19 +318,41 @@ class DomDisplay {
     }
 }
 
-// object containing the game state
-// keeps track of dynamic elements of the game
+// object keeps track of the current game state
 class State {
     constructor(level, actors, status) {
         this.level = level;
         this.actors = actors;
         this.status = status;
+        this.keys = this.trackKeys(["ArrowLeft", "ArrowRight", "ArrowUp"]);
     }
-
+    // creates a new instance of game state
     static start(level) {
         return new State(level, level.startActors, "playing");
     }
+    // returns player entity from actors
     get player() {
         return this.actors.find(a => a.type === "player");
+    }
+    // update this game's state
+    update(time, keys) {
+        // TODO: update actors
+        // determine new state by examining player collision with lava/coin
+    }
+    // tracks the keys that are currently pressed down
+    // returns an array of boolean values
+    trackKeys(keys) {
+        let pressedDown = Object.create(null);
+        let keyHandler = function(event) {
+            if (keys.includes(event.key)) {
+                pressedDown[event.key] = event.type === "keydown";
+                event.preventDefault();
+            }
+        }
+
+        window.addEventListener("keydown", keyHandler);
+        window.addEventListener("keyup", keyHandler);
+
+        return pressedDown;
     }
 }

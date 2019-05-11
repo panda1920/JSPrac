@@ -24,7 +24,7 @@ function primitiveMultiply(num1, num2) {
     }
 }
 
-addTest(primitiveMultiply, [2, 3], 6);
+addTest(primitiveMultiply, null, [2, 3], 6);
 
 // The locked box
 const box = {
@@ -60,10 +60,10 @@ function withBoxUnlockedTester(initLockState, func) {
     return box.locked;
 }
 
-addTest(withBoxUnlockedTester, [true, doNothing], true);
-addTest(withBoxUnlockedTester, [false, doNothing], false);
-addTest(withBoxUnlockedTester, [true, throwSomething], true);
-addTest(withBoxUnlockedTester, [false, throwSomething], false);
+addTest(withBoxUnlockedTester, null, [true, doNothing], true);
+addTest(withBoxUnlockedTester, null, [false, doNothing], false);
+addTest(withBoxUnlockedTester, null, [true, throwSomething], true);
+addTest(withBoxUnlockedTester, null, [false, throwSomething], false);
 
 // testRunner.run();
 // testRunner.printResult();
