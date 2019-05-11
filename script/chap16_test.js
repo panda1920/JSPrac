@@ -8,7 +8,7 @@
 
 let someplan = `
 .||v.........................................
-.|..........oo.....................@.........
+.|..........oo.....................@.#.......
 .|..........#......................#.........
 .|..........########################.........
 +++++++++...++++++++++#=...#.................
@@ -282,8 +282,113 @@ function testPlayer_leftCollision() {
     );
 }
 function testPlayer_freeFall() {
+    let level = new Level(someplan);
+    let testPlayer_gamestate = State.start(level);
+    let player = testPlayer_gamestate.player;
+    let keys = {ArrowLeft: false, ArrowRight: false, ArrowUp: false};
 
+    // set player position where it is not standing on a wall
+    player.pos.x += 1;
+
+    let oldPos = Object.assign({}, player.pos);
+    player.update(0.1, testPlayer_gamestate, keys);
+    let newPos = Object.assign({}, player.pos);
+
+    return (
+        player.speed.y === PLAYER_ACCEL_GRAVITY * 0.1 &&
+        newPos.y === oldPos.y + (PLAYER_ACCEL_GRAVITY * 0.1) * 0.1
+    );
 }
+function testPlayer_noFreeFallOnWall() {
+    let level = new Level(someplan);
+    let testPlayer_gamestate = State.start(level);
+    let player = testPlayer_gamestate.player;
+    let keys = {ArrowLeft: false, ArrowRight: false, ArrowUp: false};
+
+    let oldPos = Object.assign({}, player.pos);
+    player.update(0.1, testPlayer_gamestate, keys);
+    let newPos = Object.assign({}, player.pos);
+
+    return (
+        player.speed.y === 0 &&
+        newPos.y === oldPos.y
+    );
+}
+function testPlayer_noJumpDuringFreeFall() {
+    let level = new Level(someplan);
+    let testPlayer_gamestate = State.start(level);
+    let player = testPlayer_gamestate.player;
+    let keys = {ArrowLeft: false, ArrowRight: false, ArrowUp: true};
+
+    // set player position where it is not standing on a wall
+    player.pos.x += 1;
+
+    let oldPos = Object.assign({}, player.pos);
+    player.update(0.1, testPlayer_gamestate, keys);
+    let newPos = Object.assign({}, player.pos);
+
+    return (
+        player.speed.y === (PLAYER_ACCEL_GRAVITY * 0.1)  &&
+        newPos.y === oldPos.y + (PLAYER_ACCEL_GRAVITY * 0.1) * 0.1
+    );
+}
+function testPlayer_NoFreeFallOnWall() {
+    let level = new Level(someplan);
+    let testPlayer_gamestate = State.start(level);
+    let player = testPlayer_gamestate.player;
+    let keys = {ArrowLeft: false, ArrowRight: false, ArrowUp: false};
+
+    let oldPos = Object.assign({}, player.pos);
+    player.update(0.1, testPlayer_gamestate, keys);
+    let newPos = Object.assign({}, player.pos);
+
+    return (
+        player.speed.y === 0  &&
+        newPos.y === oldPos.y
+    );
+}
+function testPlayer_jumpDuringNoFreeFall() {
+    let level = new Level(someplan);
+    let testPlayer_gamestate = State.start(level);
+    let player = testPlayer_gamestate.player;
+    let keys = {ArrowLeft: false, ArrowRight: false, ArrowUp: true};
+
+    let oldPos = Object.assign({}, player.pos);
+    player.update(0.1, testPlayer_gamestate, keys);
+    let newPos = Object.assign({}, player.pos);
+
+    return (
+        player.speed.y === PLAYER_SPEED_JUMP &&
+        newPos.y === oldPos.y
+    );
+}
+function testPlayer_noJumpVerticalCollision() {
+    let level = new Level(someplan);
+    let testPlayer_gamestate = State.start(level);
+    let player = testPlayer_gamestate.player;
+    let keys = {ArrowLeft: false, ArrowRight: false, ArrowUp: true};
+
+    // set player to a position where it bumps its head when jump
+    player.pos.x += 2;
+    player.pos.y -= 1;
+
+    let oldPos = Object.assign({}, player.pos);
+    player.update(0.1, testPlayer_gamestate, keys);
+    let newPos = Object.assign({}, player.pos);
+
+    return (
+        player.speed.y === 0 &&
+        newPos.y === oldPos.y
+    );
+}
+
+/*
+    stationary
+    freefall
+    jump
+
+    stationary > jump > freefall
+*/
 
 addTest(testUpdate_coin, null, [], true);
 addTest(testUpdate_verticalLava, null, [], true);
@@ -297,3 +402,6 @@ addTest(testPlayer_rightCollision, null, [], true);
 addTest(testPlayer_left, null, [], true);
 addTest(testPlayer_leftCollision, null, [], true);
 addTest(testPlayer_freeFall, null, [], true);
+addTest(testPlayer_noFreeFallOnWall, null, [], true);
+addTest(testPlayer_noJumpDuringFreeFall, null, [], true);
+addTest(testPlayer_jumpDuringNoFreeFall, null, [], true);

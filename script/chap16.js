@@ -13,7 +13,7 @@ const WOBBLE_DIST = 0.07;
 // speed of player
 const PLAYER_SPEED_X = 7;
 const PLAYER_SPEED_JUMP = -17;
-const PLAYER_SPEED_GRAVITY = 30;
+const PLAYER_ACCEL_GRAVITY = 30;
 
 // represents two dimensional vector
 class Vec {
@@ -111,31 +111,36 @@ class Player extends MapEntity {
     }
     update(time, state, keys) {
         // calculate next position
-        let nextSpeed = this.calcSpeedFromKeys(keys);
+        let nextSpeed = this.calcInitialSpeed(keys, time);
         let nextPos = this.pos.plus(nextSpeed.times(time));
 
-        
+        // determine collision; if collision happens, player cannot move in that direction
         // horizontal collision
         if (state.level.touches(new Vec(nextPos.x, this.pos.y), this.size, "wall")) {
             nextSpeed.x = 0;
         }
-        // vertical collision
+        // collision against freefall
         if (state.level.touches(new Vec(this.pos.x, nextPos.y), this.size, "wall")) {
             nextSpeed.y = 0;
         }
 
-        // TODO: deal with jumps
-
+        this.pos = this.pos.plus(nextSpeed.times(time));
+        
+        // deal with jumps
+        // happens only when player is not moving vertically
+        // only alter speed; pos will be affected from the next time frame
+        if (nextSpeed.y === 0 && keys.ArrowUp) {
+            nextSpeed.y += PLAYER_SPEED_JUMP;
+        }
         this.speed = nextSpeed;
-        this.pos = this.pos.plus(this.speed.times(time));
     }
-    // calculate player speed based on keys pressed
-    calcSpeedFromKeys(keys) {
+    // calculate speed of player at start of timeframe
+    calcInitialSpeed(keys, time) {
         let xspeed = 0;
-        let yspeed = 0;
+        let yspeed = this.speed.y + time * PLAYER_ACCEL_GRAVITY;
+
         if (keys.ArrowLeft)  xspeed -= PLAYER_SPEED_X;
         if (keys.ArrowRight) xspeed += PLAYER_SPEED_X;
-        if (keys.ArrowUp)    yspeed += PLAYER_SPEED_JUMP;
         
         return new Vec(xspeed, yspeed);
     }
